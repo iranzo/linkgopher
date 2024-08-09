@@ -19,13 +19,9 @@
     }
   },
 
-  "host_permissions":[
-    "*://*/*"
-  ],
+  "host_permissions": ["*://*/*"],
 
-  "permissions": [
-    "scripting"
-  ],
+  "permissions": ["scripting"],
 
   "action": {
     "default_icon": "icons/link-gopher-32.png",

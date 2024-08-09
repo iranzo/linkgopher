@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 chrome.runtime.onMessage.addListener(onMessage);
 
 /**
@@ -10,12 +10,12 @@ chrome.runtime.onMessage.addListener(onMessage);
  *  A function to call, at most once, to send a response to the message.
  */
 function onMessage(message, sender, sendResponse) {
-  if (message.action === 'extract') {
+  if (message.action === "extract") {
     sendResponse(extractLinks());
   } else {
-    throw new Error('Unknown type of message');
+    throw new Error("Unknown type of message");
   }
-};
+}
 
 /**
  * Extract links.
@@ -30,4 +30,4 @@ function extractLinks() {
   }
 
   return links.length ? links : null;
-};
+}

@@ -1,31 +1,35 @@
-'use strict';
-document.getElementById('extract-all').addEventListener('click', event => {
+"use strict";
+document.getElementById("extract-all").addEventListener("click", (event) => {
   handler(false).then(() => window.close());
 });
 
-document.getElementById('extract-domains').addEventListener('click', event => {
-  handler(false, true).then(() => window.close());
-});
+document
+  .getElementById("extract-domains")
+  .addEventListener("click", (event) => {
+    handler(false, true).then(() => window.close());
+  });
 
-document.getElementById('extract-some').addEventListener('click', event => {
+document.getElementById("extract-some").addEventListener("click", (event) => {
   handler(true).then(() => window.close());
 });
 
-document.getElementById('about-linkgopher').addEventListener('click', event => {
-  const {homepage_url} = chrome.runtime.getManifest();
-  openTab(homepage_url).then(() => window.close());
-});
+document
+  .getElementById("about-linkgopher")
+  .addEventListener("click", (event) => {
+    const { homepage_url } = chrome.runtime.getManifest();
+    openTab(homepage_url).then(() => window.close());
+  });
 
 // Localization.
 [
-  {id: 'extract-all', messageId: 'extractAll'},
-  {id: 'extract-domains', messageId: 'extractDomains'},
-  {id: 'extract-some', messageId: 'extractSome'},
-  {id: 'about-linkgopher', messageId: 'aboutLinkGopher'}
-].forEach(item => {
+  { id: "extract-all", messageId: "extractAll" },
+  { id: "extract-domains", messageId: "extractDomains" },
+  { id: "extract-some", messageId: "extractSome" },
+  { id: "about-linkgopher", messageId: "aboutLinkGopher" },
+].forEach((item) => {
   const container = document.getElementById(item.id);
   container.innerText = chrome.i18n.getMessage(item.messageId);
-})
+});
 
 /**
  * @function handler
@@ -36,14 +40,18 @@ function handler(filtering = false, onlyDomains = false) {
   var tabId;
 
   return getCurrentTab()
-    .then(items => { tabId = items[0].id; return injectScript(tabId); })
-    .then(item => {
-      const url = `${chrome.runtime.getURL('browser/linkgopher.html')}?` +
+    .then((items) => {
+      tabId = items[0].id;
+      return injectScript(tabId);
+    })
+    .then((item) => {
+      const url =
+        `${chrome.runtime.getURL("browser/linkgopher.html")}?` +
         `tabId=${tabId}&filtering=${filtering}&onlyDomains=${onlyDomains}`;
       return openTab(url);
     })
-     .catch(error => window.alert(error.message));
-};
+    .catch((error) => window.alert(error.message));
+}
 
 /**
  * Get active tab of current window.
@@ -54,12 +62,12 @@ function getCurrentTab() {
   return new Promise((res, rej) => {
     const queryInfo = {
       active: true,
-      currentWindow: true
+      currentWindow: true,
     };
 
-    chrome.tabs.query(queryInfo, items => passNext(items, res, rej));
+    chrome.tabs.query(queryInfo, (items) => passNext(items, res, rej));
   });
-};
+}
 
 /**
  * Create tab with extension's page.
@@ -69,10 +77,10 @@ function getCurrentTab() {
  */
 function openTab(url) {
   return new Promise((res, rej) => {
-    const createProperties = {active: true, url};
-    chrome.tabs.create(createProperties, tab => passNext(tab, res, rej));
+    const createProperties = { active: true, url };
+    chrome.tabs.create(createProperties, (tab) => passNext(tab, res, rej));
   });
-};
+}
 
 /**
  * Inject script into tab
@@ -81,17 +89,17 @@ function openTab(url) {
  * @param {number} tabId -- The ID of tab.
  * @param {string} file -- Pathname of script
  */
-function injectScript(tabId, file = '/content-script.js') {
+function injectScript(tabId, file = "/content-script.js") {
   return new Promise((res, rej) => {
     chrome.scripting.executeScript(
-      { 
-        target: {tabId: tabId}, 
-        files: [file]
+      {
+        target: { tabId: tabId },
+        files: [file],
       },
-        item => passNext(item, res, rej)
-      );
+      (item) => passNext(item, res, rej),
+    );
   });
-};
+}
 
 /**
  * @function passNext
@@ -102,4 +110,4 @@ function injectScript(tabId, file = '/content-script.js') {
 function passNext(result, fulfill, reject) {
   if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
   return fulfill(result);
-};
+}
